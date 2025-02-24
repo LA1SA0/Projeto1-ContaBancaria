@@ -23,13 +23,20 @@ public class ContaCorrente extends Conta  {
 	@Override
 	public boolean sacar(float valor) { 
 		
-		if(this.getSaldo() + this.getLimite() < valor) {
-			System.out.println("\n Saldo Insuficiente!");
-			return false;
-		}
-		
-		this.setSaldo(this.getSaldo() - valor);
-		return true;
+		 if (this.getSaldo() + this.getLimite() < valor) {
+		        System.out.println("\nSaldo Insuficiente!");
+		        return false;
+		    }
+		    
+		    if (this.getSaldo() >= valor) {
+		        this.setSaldo(this.getSaldo() - valor);
+		    } else {
+		        float restante = valor - this.getSaldo();
+		        this.setSaldo(0);
+		        this.setLimite(this.getLimite() - restante);
+		    }
+		    
+		    return true;
 		
 	}
 	

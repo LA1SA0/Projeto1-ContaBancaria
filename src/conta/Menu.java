@@ -23,7 +23,6 @@ public class Menu {
 		String titular;
 		float saldo, limite, valor;
 		
-		
 		System.out.println("\nCriar Contas\n");
 
 		ContaCorrente cc1 = new ContaCorrente(contas.gerarNumero(), 123, 1, "João da Silva", 1000f, 100.0f);
@@ -91,9 +90,10 @@ public class Menu {
 			titular = leia.nextLine();
 			
 			do {
-				System.out.println("Digite o Tipo da Conta (1-CC ou 2-CP) : ");
-				tipo = leia.nextInt();
-			}while (tipo < 1 && tipo > 2);
+			    System.out.println("Digite o Tipo da Conta (1-CC ou 2-CP) : ");
+			    tipo = leia.nextInt();
+			} while (tipo < 1 || tipo > 2); 
+
 			
 			System.out.println("Digite o Saldo da Conta (R$): ");
 			saldo = leia.nextFloat();
@@ -126,58 +126,64 @@ public class Menu {
 			numero = leia.nextInt();
 			
 			contas.procurarPorNumero(numero);
-
+			
 			keyPress();
 			break;
 		case 4:
-			System.out.println( Cores.TEXT_WHITE + "\n Atualizar dados da Conta");
+			System.out.println(Cores.TEXT_WHITE + "\n Atualizar dados da Conta");
+		    
+		    System.out.print("Digite o Número da Conta: ");
 		    numero = leia.nextInt();
 
 		    var buscaConta = contas.buscarNaCollection(numero);
 
-		    if(buscaConta != null) {
-		        tipo = buscaConta.getTipo();
-
-		        System.out.print("Digite o Numero da Agência: ");
-		        agencia = leia.nextInt();
-		        System.out.print("Digite o Nome do Titular: ");
-		        leia.skip("\\R?");
-		        titular = leia.nextLine();
-
-		        System.out.print("Digite o Saldo da Conta (R$): ");
-		        saldo = leia.nextFloat();
-
-		        switch (tipo) {
-		            case 1 -> {
-		                System.out.print("Digite o Limite de Crédito (R$): ");
-		                limite = leia.nextFloat();
-
-		                contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
-		            }
-		            case 2 -> {
-		                System.out.print("Digite o dia do Aniversario da Conta: ");
-		                aniversario = leia.nextInt();
-
-		                contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
-		            }
-		            default -> {
-		                System.out.println("Tipo de conta inválido!");
-		            }
-		        }
-		    } else {
+		    if (buscaConta == null) {
 		        System.out.println("A Conta não foi encontrada!");
+		        keyPress();
+		        break; 
 		    }
-		
 
-			keyPress();
-			break;
+		    tipo = buscaConta.getTipo(); 
+
+		    System.out.print("Digite o Número da Agência: ");
+		    agencia = leia.nextInt();
+		    
+		    System.out.print("Digite o Nome do Titular: ");
+		    leia.nextLine(); 
+		    titular = leia.nextLine();
+
+		    System.out.print("Digite o Saldo da Conta (R$): ");
+		    saldo = leia.nextFloat();
+
+		    switch (tipo) {
+		        case 1 -> {
+		            System.out.print("Digite o Limite de Crédito (R$): ");
+		            limite = leia.nextFloat();
+
+		            contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+		        }
+		        case 2 -> {
+		            System.out.print("Digite o dia do Aniversário da Conta: ");
+		            aniversario = leia.nextInt();
+
+		            contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
+		        }
+		        default -> System.out.println("Tipo de conta inválido!");
+		    }
+
+		    keyPress();
+		    break;
 		case 5:
 			System.out.println(Cores.TEXT_WHITE + "\n Apagar Conta");
 			
 			System.out.println("Digite o número da conta: ");
 			numero = leia.nextInt();
-			
-			contas.deletar(numero);
+
+			if (contas.buscarNaCollection(numero) == null) {
+			    System.out.println("A Conta número " + numero + " não foi encontrada!");
+			} else {
+			    contas.deletar(numero);
+			}
 			
 			keyPress();
 			break;
@@ -190,6 +196,9 @@ public class Menu {
 		    do {
 		        System.out.println("Digite o Valor do Saque (R$): ");
 		        valor = leia.nextFloat();
+		        if (valor <= 0) {
+		            System.out.println("O valor deve ser maior que zero!");
+		        }
 		    } while (valor <= 0);
 
 		    contas.sacar(numero, valor);
@@ -203,8 +212,11 @@ public class Menu {
 		    numero = leia.nextInt();
 
 		    do {
-		        System.out.println("Digite o Valor do Depósito (R$): ");
+		        System.out.println("Digite o Valor do Saque (R$): ");
 		        valor = leia.nextFloat();
+		        if (valor <= 0) {
+		            System.out.println("O valor deve ser maior que zero!");
+		        }
 		    } while (valor <= 0);
 
 		    contas.depositar(numero, valor);
